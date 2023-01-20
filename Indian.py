@@ -11,8 +11,9 @@ comPoint = 10 # 컴퓨터 돈
 playerPoint = 10 # 플레이어 돈
 winRate = 0 # 컴퓨터 승률계산
 drawRate = 0 # 컴퓨터 승률계산
-betNum = 0 #플레이어 베팅 변수
 betAmount = 0 #베팅액
+betNum = 1 # 베팅 순환
+comFollow = True
 
 def shuffleDeck():
     list=[card1 for card1 in range(1,11)] # 1~10 카드넣기
@@ -49,48 +50,55 @@ def indianCom():
 
     print("com 베팅확률", winRate,"/",len(comDeck)-drawRate)
 
-indianDeck = shuffleDeck()
-comDeck = indianDeck
+def comBet():
+    global winRate, drawRate
+    global combetAmount, comFollow
+    comBetting = [1]*winRate
+    comBetting += [0]*(len(comDeck)-winRate)
+    random.shuffle(comBetting)
+    if comBetting[0] == 1:
+        comFollow = True
+    elif comBetting[0] == 0:
+        comFollow = False
 
-while indianPlaying:
+def boardPan():
     print("--------------------------------------")
     print("상대 돈 : ", comPoint)
     print("플레이어 돈 : ", playerPoint)
     print("스킬 포인트 : ", skillPoint)
+    print("상대의 수는 : ", comCard)
     print("--------------------------------------")
 
-    indianIndex = int(input("1. 카드 뽑기 \n2. 끝내기\n : "))
-    if indianIndex == 1:
-        drawCard()
-        print("--------------------------------------")
-        print("상대의 수는 : ", comCard)
-        print("test용 ", playerCard)
-        betNum = int(input("베팅 시 1번,포기 시 2번\n :"))
-        print("--------------------------------------")
-        indianCom()
-        if  betNum == 1:
-            print("--------------------------------------")
-            print("얼마를 베팅하실건가요?")
-            betAmount = int(input("최대 베팅액은 2점입니다\n: "))
-            print("--------------------------------------")
-            if comCard >playerCard:
-                playerPoint -= betAmount
-                comPoint += betAmount
-                print("--------------------------------------")
-                print("패배하셨습니다.")
-            elif comCard < playerCard:
-                playerPoint += betAmount
-                comPoint -= betAmount
-                print("--------------------------------------")
-                print("승리하셨습니다.")
-        elif betNum == 2:
-            print("--------------------------------------")
-            print("베팅을 포기하셨습니다.")
-            print("플레이어 돈 : ", playerPoint)
-            playerPoint -= 1
-            comPoint =+ 1
-    elif indianIndex == 2:
-        indianPlaying=False
-    elif indianIndex == 3:
-        print(indianDeck)
+indianDeck = shuffleDeck()
+comDeck = indianDeck
 
+while indianPlaying:
+    drawCard()
+    while betNum > 0:
+        if betNum == 1:
+            betAmount = int(input("베팅값 입력(0 입력시 포기) : "))
+        else :
+            betAmount = int(input("베팅값 입력(0 입력시 포기, 99입력시 패까기) : "))
+            indianCom()
+            comBet()
+            if betAmount > 0:
+                if comFollow == True:
+                    betNum +=1
+                    continue
+
+
+            elif betAmount == 99:
+                if comCard >playerCard:
+                    playerPoint -= betAmount
+                    comPoint += betAmount
+                    print("패배하셨습니다.")
+                    boardPan()
+                elif comCard < playerCard:
+                    playerPoint += betAmount
+                    comPoint -= betAmount
+                    print("승리하셨습니다.")
+            elif betAmount == 0:
+                print("베팅을 포기하셨습니다.")
+                playerPoint -= 1
+                comPoint += 1
+                boardPan()
