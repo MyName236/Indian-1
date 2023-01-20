@@ -11,6 +11,8 @@ comPoint = 10 # 컴퓨터 돈
 playerPoint = 10 # 플레이어 돈
 winRate = 0 # 컴퓨터 승률계산
 drawRate = 0 # 컴퓨터 승률계산
+betNum = 0 #플레이어 베팅 변수
+betAmount = 0 #베팅액
 
 def shuffleDeck():
     list=[card1 for card1 in range(1,11)] # 1~10 카드넣기
@@ -24,19 +26,20 @@ def shuffleDeck():
 def drawCard():
     global cardOrder
     global playerCard, comCard
-    global indianDeck
+    global indianDeck, comDeck
 
-    if cardOrder == 20: #카드 다썼을경우 셔플
+    if cardOrder == 10: #카드 다썼을경우 셔플
         indianDeck = shuffleDeck()
         cardOrder = 0
+        comDeck = indianDeck
     playerCard = indianDeck[cardOrder] # 플레이어 카드배분
     comCard = indianDeck[cardOrder+1] # 컴퓨터 카드배분
-    cardOrder += 2
+    cardOrder += 1
 
 def indianCom():
-    global indianDeck, comDeck
-    global winRate
-    global drawRate
+    global comDeck
+    global winRate, drawRate
+    winRate, drawRate = 0, 0
     comDeck.remove(playerCard)
     for index in comDeck:
         if playerCard < index:
@@ -59,9 +62,33 @@ while indianPlaying:
     indianIndex = int(input("1. 카드 뽑기 \n2. 끝내기\n : "))
     if indianIndex == 1:
         drawCard()
+        print("--------------------------------------")
         print("상대의 수는 : ", comCard)
         print("test용 ", playerCard)
+        betNum = int(input("베팅 시 1번,포기 시 2번\n :"))
+        print("--------------------------------------")
         indianCom()
+        if  betNum == 1:
+            print("--------------------------------------")
+            print("얼마를 베팅하실건가요?")
+            betAmount = int(input("최대 베팅액은 2점입니다\n: "))
+            print("--------------------------------------")
+            if comCard >playerCard:
+                playerPoint -= betAmount
+                comPoint += betAmount
+                print("--------------------------------------")
+                print("패배하셨습니다.")
+            elif comCard < playerCard:
+                playerPoint += betAmount
+                comPoint -= betAmount
+                print("--------------------------------------")
+                print("승리하셨습니다.")
+        elif betNum == 2:
+            print("--------------------------------------")
+            print("베팅을 포기하셨습니다.")
+            print("플레이어 돈 : ", playerPoint)
+            playerPoint -= 1
+            comPoint =+ 1
     elif indianIndex == 2:
         indianPlaying=False
     elif indianIndex == 3:
