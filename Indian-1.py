@@ -96,7 +96,9 @@ while indianPlaying:
             betAmount = int(input("베팅값 입력(0 입력시 포기) : "))
         else:
             betAmount = int(input("베팅값 입력(0 입력시 포기, 99입력시 패까기) : "))
-        if betAmount > 0 and betAmount!=99:
+        if nowBet + betAmount > playerPoint:
+            print("베팅액 초과")
+        elif betAmount > 0 and betAmount!=99:
             nowBet += betAmount
             print("현재 베팅액 : ", nowBet)
             if comFollow == True:
@@ -130,8 +132,7 @@ while indianPlaying:
             betNum = 1
             break
 
-        elif nowBet + betAmount > playerPoint:
-            print("베팅액 초과")
+
 
         elif nowBet +betAmount == playerPoint and nowBet+betAmount<comPoint:
             if comCard > playerCard:
