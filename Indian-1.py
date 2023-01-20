@@ -30,7 +30,7 @@ def drawCard():
     global playerCard, comCard
     global indianDeck, comDeck
 
-    if cardOrder == 10:  # 카드 다썼을경우 셔플
+    if cardOrder == 9:  # 카드 다썼을경우 셔플
         indianDeck = shuffleDeck()
         cardOrder = 0
         comDeck = indianDeck
@@ -74,9 +74,11 @@ comBetting = []
 
 while indianPlaying:
     if playerPoint <=0 or comPoint <=0 :
-        if playerPoint == 0:
+        if playerPoint <= 0:
+            print("player 사망")
             break
-        else:
+        elif comPoint <= 0:
+            print("com 사망")
             break
     drawCard()
     boardPan()
@@ -84,18 +86,17 @@ while indianPlaying:
         indianCom()
         comBet()
         if playerPoint <= 0 or comPoint <= 0:
-            if playerPoint == 0:
-                print("player 사망")
+            if playerPoint <= 0:
                 break
-            else:
-                print("com 사망")
+            elif comPoint <= 0:
                 break
         if betNum == 1:
             print("상대 카드는 :", comCard)
+            print("내카드 ", playerCard)
             betAmount = int(input("베팅값 입력(0 입력시 포기) : "))
         else:
             betAmount = int(input("베팅값 입력(0 입력시 포기, 99입력시 패까기) : "))
-        if betAmount > 0 and nowBet+betAmount < playerPoint:
+        if betAmount > 0 and betAmount!=99:
             nowBet += betAmount
             print("현재 베팅액 : ", nowBet)
             if comFollow == True:
@@ -128,10 +129,27 @@ while indianPlaying:
             nowBet = 0
             betNum = 1
             break
+
         elif nowBet + betAmount > playerPoint:
             print("베팅액 초과")
 
-        elif nowBet +betAmount == playerPoint:
+        elif nowBet +betAmount == playerPoint and nowBet+betAmount<comPoint:
+            if comCard > playerCard:
+                playerPoint -= nowBet+betAmount
+                comPoint += nowBet+betAmount
+                print("패배하셨습니다.")
+                print("내카드는 ", playerCard, "였습니다")
+                boardPan()
+            elif comCard < playerCard:
+                playerPoint += nowBet+betAmount
+                comPoint -= nowBet+betAmount
+                print("승리하셨습니다.")
+                print("내카드는 ", playerCard, "였습니다")
+                boardPan()
+            nowBet = 0
+            betNum = 1
+
+        elif nowBet + betAmount >= comPoint:
             if comCard > playerCard:
                 playerPoint -= nowBet+betAmount
                 comPoint += nowBet+betAmount
