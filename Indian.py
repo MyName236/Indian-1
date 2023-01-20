@@ -58,7 +58,6 @@ while indianPlaying:
     print("플레이어 돈 : ", playerPoint)
     print("스킬 포인트 : ", skillPoint)
     print("--------------------------------------")
-
     indianIndex = int(input("1. 카드 뽑기 \n2. 끝내기\n : "))
     if indianIndex == 1:
         drawCard()
@@ -86,9 +85,8 @@ while indianPlaying:
         elif betNum == 2:
             print("--------------------------------------")
             print("베팅을 포기하셨습니다.")
-            print("플레이어 돈 : ", playerPoint)
             playerPoint -= 1
-            comPoint =+ 1
+            comPoint += 1
     elif indianIndex == 2:
         indianPlaying=False
     elif indianIndex == 3:
